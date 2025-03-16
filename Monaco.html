@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua Editor with Monaco</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: black; }
+        #editor { width: 100vw; height: 100vh; background-color: black !important; }
+    </style>
+</head>
+<body>
+    <div id="editor"></div>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+        require(["vs/editor/editor.main"], function () {
+            monaco.editor.defineTheme('custom-dark', {
+                base: 'hc-black',
+                inherit: true,
+                rules: [
+                    { token: 'keyword', foreground: 'FFA500' },  // Orange color for keywords
+                    { token: 'identifier', foreground: 'FFA500' }, // Orange color for identifiers
+                    { token: 'string', foreground: 'ffffff' },
+                    { token: 'number', foreground: 'ffffff' },
+                    { token: 'comment', foreground: 'aaaaaa', fontStyle: 'italic' }
+                ],
+                colors: {
+                    'editor.foreground': '#FFFFFF',
+                    'editor.background': '#000000',
+                    'editorLineNumber.foreground': '#FFFFFF',
+                    'editorLineNumber.activeForeground': '#FFFFFF',
+                    'editorCursor.foreground': '#FFFFFF',
+                    'editorIndentGuide.background': '#555555',
+                    'editorIndentGuide.activeBackground': '#AAAAAA',
+                    'editorOverviewRuler.border': '#000000',
+                    'editor.selectionBackground': '#333333',
+                    'editor.selectionHighlightBackground': '#444444',
+                    'editor.inactiveSelectionBackground': '#222222'
+                }
+            });
+
+            const editor = monaco.editor.create(document.getElementById("editor"), {
+                value: "-- Welcome To Phantom\n\n-- You can start writing your Lua code here!\nprint('Hello, Lua!')",
+                language: "lua",
+                theme: "custom-dark",
+                automaticLayout: true,
+                quickSuggestions: { other: true, comments: true, strings: true },
+                wordBasedSuggestions: true,
+                autoClosingBrackets: "always",
+                autoClosingQuotes: "always",
+                cursorBlinking: "smooth",
+                cursorSmoothCaretAnimation: "on"
+            });
+
+            monaco.languages.registerCompletionItemProvider('lua', {
+                provideCompletionItems: function () {
+                    return {
+                        suggestions: [
+                            {
+                                label: 'print',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'print(${1:message})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Outputs text to the console'
+                            },
+                            {
+                                label: 'math.abs',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'math.abs(${1:number})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns the absolute value of a number'
+                            },
+                            {
+                                label: 'math.floor',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'math.floor(${1:number})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns the largest integer less than or equal to the number'
+                            },
+                            {
+                                label: 'math.random',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'math.random(${1:min}, ${2:max})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns a random number'
+                            },
+                            {
+                                label: 'string.len',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'string.len(${1:string})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns the length of a string'
+                            },
+                            {
+                                label: 'string.sub',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'string.sub(${1:string}, ${2:start}, ${3:end})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns a substring of the given string'
+                            },
+                            {
+                                label: 'table.insert',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'table.insert(${1:table}, ${2:value})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Inserts an element at the given position in the table'
+                            },
+                            {
+                                label: 'table.remove',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'table.remove(${1:table}, ${2:pos})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Removes an element at the given position in the table'
+                            },
+                            {
+                                label: 'type',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'type(${1:variable})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Returns the type of the given variable'
+                            },
+                            {
+                                label: 'tostring',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'tostring(${1:value})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Converts a value to a string'
+                            },
+                            {
+                                label: 'tonumber',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'tonumber(${1:value})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Converts a value to a number'
+                            },
+                            {
+                                label: 'local',
+                                kind: monaco.languages.CompletionItemKind.Keyword,
+                                insertText: 'local ${1:var} = ${2:value}',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Declares a local variable'
+                            },
+                            {
+                                label: 'printidentity',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                insertText: 'printidentity(${1:name})',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                documentation: 'Prints the identity of the provided name'
+                            }
+                        ]
+                    };
+                }
+            });
+        });
+    </script>
+</body>
+</html>
